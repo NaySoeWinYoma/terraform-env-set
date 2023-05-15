@@ -1,0 +1,21 @@
+name: 'Update'
+description: 'Set Env keys to Terraform Cloud'
+inputs:
+  TF_API_TOKEN:  
+    description: 'TF_API_TOKEN Key'
+    required: true
+  TF_WORKSPACE_ID:  
+    description: 'TF_WORKSPACE_ID'
+    required: true
+runs:
+  using: "composite"
+  steps: 
+    - name: Update Keys
+      run: |
+        curl \
+          --header "Authorization: Bearer ${{ inputs.TF_API_TOKEN }}" \
+          --header "Content-Type: application/vnd.api+json" \
+          --request POST \
+          --data '{"data":{"attributes":{"key":"Test2","value":"TestValue2","category":"terraform","description":null,"hcl":true,"sensitive":false,"read-only":false,"created-at":null},"relationships":{"configurable":{"data":{"type":"workspaces","id":"${{ inputs.TF_WORKSPACE_ID }}"}}},"type":"vars"}}' \
+          https://app.terraform.io/api/v2/workspaces/${{ inputs.TF_WORKSPACE_ID }}/vars
+      shell: bash
